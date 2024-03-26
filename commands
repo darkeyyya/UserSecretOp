@@ -1,0 +1,440 @@
+print("before start")
+repeat task.wait() until game.Players.LocalPlayer
+print("after start")
+local localplr = game.Players.LocalPlayer
+local rs = game:GetService("ReplicatedStorage")
+local eve = rs:WaitForChild("Events")
+local createlight = eve:WaitForChild("createLightning")
+local createIce = eve:WaitForChild("createIce")
+local do_damage = eve:WaitForChild("DO_DAMAGE")
+local values = rs:WaitForChild("Values")
+local curking = values:WaitForChild("CurrentKing")
+local tss = game:GetService("TextChatService")
+local prefix = ":"
+local commands = {
+	{"smite","s","sm"},{"loopsmite","ls","loops","lsmite"},{"unloopsmite","unls","us"},{"damage","dm","poison"},{"heal","h"},{"loopdamage","looppoison","ldamage","ldm","ld"},{"loopheal","looph","lheal","lh"},{"unloopdamage","uld"},{"unloopheal","ulh"},{"givesmitesword","gss"},{"giveicesword","gis"},{"rank"},{"unrank"},{"loopice","lice","li","loopi"},{"unloopice","unlice","unli","unloopi"},{"ice","i"}
+}
+
+local curad = {}
+local cb = 10
+local curcb = 0
+local num = 4
+local far = 5
+local far2 = 10
+local init = 16
+local deb = true
+local numoflight = 20
+local numperp = 1
+local admins = {game.Players.LocalPlayer.DisplayName,"user"}
+local functions = {
+	function(plr,plrs,splitted)
+		print("smiting")
+		if curking.Value ~= localplr.Name then
+			return 
+		end
+		local num = tonumber(splitted[3]) or 1
+
+		for i,v in pairs(plrs) do
+			if not v.Character then return end
+			local pr = v.Character.PrimaryPart
+			if not pr then return end
+
+			for x = 1,num do
+				if curking.Value ~= localplr.Name then
+					return 
+				end
+				createlight:FireServer(pr.Position)
+				curcb+=1
+				if curcb >= cb then
+					curcb = 0
+					task.wait()
+				end
+			end
+		end
+	end,
+	function(plr,plrs,splitted)
+		if curking.Value ~= localplr.Name then
+			return 
+		end
+		local num = tonumber(splitted[3]) or 1
+		local num2 = tonumber(splitted[4]) or 1
+		local deb = true
+		for i,v in  pairs(plrs) do
+			if v:FindFirstChild("loopsmite") then
+				continue
+			end
+			local s = Instance.new("BoolValue",v)
+			s.Name = "loopsmite"
+		end
+		while true do
+			deb = true
+			for i,v in pairs(plrs) do
+				if not v.Character then deb = false continue end
+				local pr = v.Character.PrimaryPart
+				if not pr then  deb = false continue end
+				local bool = nil
+				if not v:FindFirstChild("loopsmite") then
+					continue
+				end
+				for x = 1,num do
+					if curking.Value ~= localplr.Name then
+						return 
+					end
+
+					createlight:FireServer(pr.Position)
+					deb = false
+					curcb+=1
+					if curcb >= cb then
+						curcb = 0
+						task.wait()
+					end
+				end
+			end
+			if deb then return end
+			task.wait(num2)
+		end
+	end,
+	function(plr,plrs,splitted)
+		for i,v in pairs(plrs) do
+			local val = v:FindFirstChild("loopsmite")
+			if val then
+				val:Destroy()
+			end
+		end
+	end,
+	function(plr,plrs,splitted)
+		local num = tonumber(splitted[3]) or 100
+		for i,v in pairs(plrs) do
+			if not v.Character then
+				continue
+			end
+			local hum = v.Character:FindFirstChildOfClass("Humanoid")
+			if not hum then 
+				continue
+			end
+			do_damage:FireServer(hum,num,0)
+		end
+	end,
+	function(plr,plrs,splitted)
+		local num = tonumber(splitted[3]) or 100
+		for i,v in pairs(plrs) do
+			if not v.Character then
+
+				continue
+			end
+			local hum = v.Character:FindFirstChildOfClass("Humanoid")
+			if not hum then 
+
+				continue
+			end
+			do_damage:FireServer(hum,-num,0)
+		end
+	end,
+	function(plr,plrs,splitted)
+		local num = tonumber(splitted[3]) or 100
+		local num2 = tonumber(splitted[4]) or 1
+		for i,v in pairs(plrs) do
+			if v:FindFirstChild("loopdamage") then
+				continue
+			end
+			local bool = Instance.new("BoolValue",v)
+			bool.Name = "loopdamage"
+		end
+		local deb = true
+		while true do
+			deb = true
+			for i,v in pairs(plrs) do
+				if not v:FindFirstChild("loopdamage")  then
+					continue
+				end
+				if not v.Character then
+					deb = false
+					continue
+				end
+				local hum = v.Character:FindFirstChildOfClass("Humanoid")
+				if not hum then
+					deb = false
+					continue
+				end
+				deb = false
+				do_damage:FireServer(hum,num,0)
+			end
+			if deb == true then return end
+			task.wait(num2)
+		end
+	end,
+	function(plr,plrs,splitted)
+		local num = tonumber(splitted[3]) or 100
+		local num2 = tonumber(splitted[4]) or 1
+		for i,v in pairs(plrs) do
+			if v:FindFirstChild("loopheal") then
+				continue
+			end
+			local bool = Instance.new("BoolValue",v)
+			bool.Name = "loopheal"
+		end
+		local deb = true
+		while true do
+			deb = true
+			for i,v in pairs(plrs) do
+				if not v:FindFirstChild("loopheal") then
+					continue
+				end
+				if not v.Character then
+					deb = false
+					continue
+				end
+				local hum = v.Character:FindFirstChildOfClass("Humanoid")
+				if not hum then
+					deb = false
+					continue
+				end
+				deb =false
+				do_damage:FireServer(hum,-num,0)
+			end
+			if deb == true then return end
+			task.wait(num2)
+		end
+	end,
+	function(plr,plrs,splitted)
+		for i,v in pairs(plrs) do
+			local valu = v:FindFirstChild("loopdamage")
+			if valu then
+				valu:Destroy()
+			end
+		end
+	end
+	,
+	function(plr,plrs,splitted)
+		for i,v in pairs(plrs) do
+			local valu = v:FindFirstChild("loopheal")
+			if valu then
+				valu:Destroy()
+			end
+		end
+	end,
+	function(plr,plrs,splitted)
+		local val3 = tonumber(splitted[3]) or numoflight
+		local val4 = tonumber(splitted[4]) or num
+		local val5 = tonumber(splitted[5]) or numperp
+		local val6 = tonumber(splitted[6]) or far
+		local val7 = tonumber(splitted[7]) or far2
+		local val8 = tonumber(splitted[8]) or init
+		for i,v in pairs(plrs) do
+			local char = v.Character 
+			if not char then continue end
+			local pr = char.PrimaryPart
+			local tool = char:FindFirstChildOfClass("Tool")
+			if tool then
+				local val = tool.Handle.Attacking
+				val.Changed:Connect(function()
+					if val.Value == true then
+						for x =1,val3 do
+							for i = 1,val4 do
+								for az = 1,val5 do
+									local c1 =  pr.CFrame + pr.CFrame.LookVector*(val6*x+val8)+ pr.CFrame.RightVector*(i*val7-num/2*val7-val7/2)
+									createlight:FireServer(c1.Position)
+									task.wait()
+								end
+							end
+						end
+					end
+				end)
+			end	
+		end
+	end,
+	function(plr,plrs,splitted)
+		local val3 = tonumber(splitted[3]) or numoflight
+		local val4 = tonumber(splitted[4]) or num
+		local val5 = tonumber(splitted[5]) or numperp
+		local val6 = tonumber(splitted[6]) or far
+		local val7 = tonumber(splitted[7]) or far2
+		local val8 = tonumber(splitted[8]) or init
+
+		for i,v in pairs(plrs) do
+			local char = v.Character 
+			if not char then continue end
+			local pr = char.PrimaryPart
+			local tool = char:FindFirstChildOfClass("Tool")
+			if tool then
+				local val = tool.Handle.Attacking
+				val.Changed:Connect(function()
+					if val.Value == true then
+						for x =1,val3 do
+							for i = 1,val4 do
+								for az = 1,val5 do
+									local c1 =  pr.CFrame + pr.CFrame.LookVector*(val6*x+val8)+ pr.CFrame.RightVector*(i*val7-num/2*val7-val7/2)
+									createIce:FireServer(c1.Position)
+									task.wait()
+								end
+							end
+						end
+					end
+				end)
+			end	
+		end
+	end,
+	function(plr,plrs,splitted)
+		for i,v in pairs(plrs) do
+			if table.find(curad,v) then continue end
+			table.insert(curad,v)
+		end
+	end,
+	function(plr,plrs,splitted)
+		for i,v in pairs(plrs) do
+			local ind = table.find(curad,v) 
+			if not ind then continue end
+			table.remove(curad,ind)
+		end
+	end,
+	function(plr,plrs,splitted)
+		
+		local num = tonumber(splitted[3]) or 1
+		local num2 = tonumber(splitted[4]) or 1
+		local deb = true
+		for i,v in  pairs(plrs) do
+			if v:FindFirstChild("loopice") then
+				continue
+			end
+			local s = Instance.new("BoolValue",v)
+			s.Name = "loopice"
+		end
+		while true do
+			deb = true
+			for i,v in pairs(plrs) do
+				if not v.Character then deb = false continue end
+				local pr = v.Character.PrimaryPart
+				if not pr then  deb = false continue end
+				local bool = nil
+				if not v:FindFirstChild("loopice") then
+					continue
+				end
+				for x = 1,num do
+					createIce:FireServer(pr.Position)
+					deb = false
+					curcb+=1
+					if curcb >= cb then
+						curcb = 0
+						task.wait()
+					end
+				end
+			end
+			if deb then return end
+			task.wait(num2)
+		end
+	end
+	,function(plr,plrs,splitted)
+		for i,v in pairs(plrs) do
+			local val = v:FindFirstChild("loopice")
+			if val then
+				val:Destroy()
+			end
+		end
+	end,
+	function(plr,plrs,splitted)
+		local num = tonumber(splitted[3]) or 1
+		for i,v in pairs(plrs) do
+			if not v.Character then continue end
+			local pr = v.Character.PrimaryPart
+			if not pr then continue end
+			for x = 1,num do
+				createIce:FireServer(pr.Position)
+				curcb+=1
+				if curcb >= cb then
+					curcb = 0
+					task.wait()
+				end
+			end
+		end
+	end,
+} 
+
+
+local function getplayers(speaker,name)
+	local msg = string.lower(name)
+	local pos = {}
+
+	for i,v in pairs(game.Players:GetPlayers()) do
+		if string.lower(v.DisplayName) == "random" or string.lower(v.DisplayName) == "king" then
+			table.insert(pos,v)
+		end
+	end
+	if msg == "me" then 
+		return {speaker}
+	elseif msg == "all" then
+		return game.Players:GetPlayers()
+	elseif msg == "other" or msg == "others" then
+		local plrs =game.Players:GetPlayers()
+		table.remove(plrs,table.find(plrs,speaker))
+		return plrs
+	elseif msg == "king" then
+		return {table.unpack(pos),game.Players:FindFirstChild(curking.Value)}
+	elseif msg == "random" then
+		return {table.unpack(pos),game.Players:GetPlayers()[math.random(1,#game.Players:GetPlayers())]}
+	else
+		print("reached")
+		local plrs = {}
+		for i,v in pairs(game.Players:GetPlayers()) do
+			if string.lower(string.sub(v.DisplayName,1,#msg)) == string.lower(string.sub(msg,1,#msg)) then
+				table.insert(plrs,v)
+			end
+		end
+		return plrs
+	end
+end
+
+function fun(msg)
+	for i,v in pairs(commands) do
+		for _,x in pairs(commands[i]) do
+			if string.lower(msg) ==prefix.. x then
+				return i
+			end
+		end
+	end
+	return nil
+end
+
+
+
+
+function execute()
+	print("executing")
+	tss.MessageReceived:Connect(function(mssg)
+		print("someone chatted")
+		local found = false
+		for i,v in pairs(curad) do
+			if v.UserId == mssg.TextSource.UserId then
+				found = true
+				break
+			end
+		end
+		print(curad)
+		local plr = game.Players:GetPlayerByUserId(mssg.TextSource.UserId)
+		if not found then return end
+	
+		local msg = mssg.Text
+		local splitted = string.split(msg," ")
+		local val1 = splitted[1]
+		local val2 = splitted[2]
+	
+		local posoffun = fun(val1)
+
+		if posoffun == nil then return nil end
+		local plrs = getplayers(plr,val2)
+	
+		functions[posoffun](plr,plrs,splitted)
+	end)
+end
+
+
+
+for i,plr in pairs(game.Players:GetPlayers()) do
+	for i2,adminName in pairs(admins) do
+		if string.lower(string.sub(adminName,1,#adminName)) == string.lower(string.sub(plr.DisplayName,1,#adminName)) and not table.find(curad,plr) then
+			table.insert(curad,plr)
+		end
+	end 
+end
+--execute(game.Players.LocalPlayer)
+execute()
+print("start executing")
